@@ -42,7 +42,13 @@ dependencies:
   provider: ^6.1.5+1
   collection: ^1.19.1
 
+flutter_launcher_icons:
+  android: true
+  iOS: true
+  image_path: "assets/Tabsy_logo.png"
+
 dev_dependencies:
+  flutter_launcher_icons: ^0.14.4
   flutter_test:
     sdk: flutter
 
