@@ -18,7 +18,7 @@ cells with "<-". Clicking on them takes us to the fret with the content
 
 ![Edit Screen](assets/edit_screen.jpeg)
 ![Read Screen](assets/read_screen.jpeg)
-![Tab List](assets/tab_list)
+![Tab List](assets/tab_list.jpeg)
 ![Tabsy Icon](assets/Tabsy_logo.png)
 
 ## Current Limitations
