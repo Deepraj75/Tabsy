@@ -111,6 +111,7 @@ class ReadFrets extends StatelessWidget {
 
     int onBlock = screenWidth ~/ cellWidth;
     int noOfBlocks = (grid.beats[0].length / onBlock).ceil();
+    // all grid.beats[i] have same length
 
     return SliverList.builder(
       itemCount: noOfBlocks,
@@ -148,6 +149,7 @@ class FretBlock extends StatelessWidget {
   }
 
   String getText(int beat, int gs) {
+    //beat.note == null case not handled
     if (beat >= twb.beats[gs].length) {
       return "";
     }

@@ -66,6 +66,8 @@ class BeatsDivider {
       {
         beats[i].add(Beat());
       }
+      // make the number of beats equal for
+      // all strings for better visual
     }
 
     if (blank)
@@ -79,6 +81,7 @@ class BeatsDivider {
           l.add(Beat());
         }
       }
+      //if tab is empty, fill a measure of beats
     }
 
     final finalBeats = List<List<Beat>>.unmodifiable(
