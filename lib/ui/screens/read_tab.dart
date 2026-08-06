@@ -167,6 +167,11 @@ class FretBlock extends StatelessWidget {
       }
     }
 
+    if (!currBeat.isStart)
+    {
+      return endMeasure;
+    }
+
     if (currBeat.note != null && currBeat.note!.fret != -1) {
       String effect = "";
 
