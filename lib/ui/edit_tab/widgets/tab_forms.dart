@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tabsy/ui/view_models/edit_screen_vm.dart';
-import 'package:tabsy/data/models/tuning/tuning.dart';
+import 'package:tabsy/ui/edit_tab/edit_screen_vm.dart';
+import 'package:tabsy/data/models/tuning.dart';
 
 class TabName extends StatefulWidget {
   final GlobalKey<FormFieldState> nameKey;

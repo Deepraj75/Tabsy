@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tabsy/data/models/note/note.dart';
-import 'package:tabsy/ui/view_models/edit_screen_vm.dart';
+import 'package:tabsy/data/models/note.dart';
+import 'package:tabsy/ui/edit_tab/edit_screen_vm.dart';
 
 class EffectDialog extends StatelessWidget {
   const EffectDialog({super.key});
@@ -48,13 +48,13 @@ class DurationDialog extends StatelessWidget {
   const DurationDialog({super.key});
 
   static String getDurationIcon(
-    NoteDuration duration) {
+    Duration duration) {
     switch (duration) {
-      case NoteDuration.whole:
+      case Duration.whole:
         return "1";
-      case NoteDuration.half:
+      case Duration.half:
         return "1/2";
-      case NoteDuration.quarter:
+      case Duration.quarter:
         return "1/4";
     }
   }
@@ -67,7 +67,7 @@ class DurationDialog extends StatelessWidget {
       title: const Text("Select Duration"),
       content: Column(
         mainAxisSize: MainAxisSize.min,
-        children: NoteDuration.values.map((d) {
+        children: Duration.values.map((d) {
           return ListTile(
             selected: d == vm.activeDuration,
             title: Text("${d.name} Note"),
