@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart' hide Tab;
 import 'package:provider/provider.dart';
-import 'package:tabsy/data/models/tab/tab.dart';
-import 'package:tabsy/ui/view_models/edit_screen_vm.dart';
-import 'package:tabsy/ui/widgets/edit_tab/tab_forms.dart';
-import 'package:tabsy/ui/widgets/edit_tab/toolbar.dart';
-import 'package:tabsy/ui/widgets/edit_tab/fret_grid.dart';
-import 'package:tabsy/ui/widgets/edit_tab/note_properties.dart';
-import 'package:tabsy/ui/widgets/edit_tab/new_measure_button.dart';
+import 'package:tabsy/data/models/tab.dart';
+import 'edit_screen_vm.dart';
+import 'widgets/tab_forms.dart';
+import 'widgets/toolbar.dart';
+import 'widgets/fret_grid.dart';
+import 'widgets/note_properties.dart';
+import 'widgets/new_measure_button.dart';
 
 class EditScreen extends StatelessWidget {
   final Tab? tab;

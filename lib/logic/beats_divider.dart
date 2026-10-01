@@ -1,5 +1,5 @@
-import 'package:tabsy/data/models/note/note.dart';
-import 'package:tabsy/data/models/tab/tab.dart';
+import 'package:tabsy/data/models/note.dart';
+import 'package:tabsy/data/models/tab.dart';
 import 'package:tabsy/data/models/beat.dart';
 import 'package:collection/collection.dart';
 

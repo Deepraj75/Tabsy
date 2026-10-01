@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart' hide Tab;
-import 'package:tabsy/data/models/tab/tab.dart';
-import 'package:tabsy/data/repository/repo.dart';
+import 'package:tabsy/data/models/tab.dart';
+import 'package:tabsy/data/repo_service.dart';
 
 class TabListVm extends ChangeNotifier
 {
-  List<Tab> _tabs = [];
+  List<List<String>> _tabs = [];
 
   List<Tab> get tabs => List.unmodifiable(_tabs);
 
-  void loadTabs()
+  void loadTabs() async
   {
-    _tabs = Repo.getTabs();
+    _tabs = await RepoService.instance.getAllTabs();
     notifyListeners();
   }
 
@@ -21,7 +21,7 @@ class TabListVm extends ChangeNotifier
 
   Future<void> deleteTab(Tab tab) async
   {
-    await Repo.deleteTab(tab);
+    await RepoService.instance.deleteTab(tab.id!);
     loadTabs();
   }
 }

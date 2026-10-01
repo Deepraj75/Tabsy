@@ -90,22 +90,31 @@ class RepoService {
     final database = await Repo.instance.db;
 
     final result = await database.rawQuery(
-      ''' SELECT Tabs.name as tabName, Tunings.name as tuningName
-      FROM Tabs JOIN Tunings ON Tabs.tuningId = Tunings.id'''
+      ''' SELECT Tabs.name as tabName, Tunings.name as tuningName,
+      Tabs.id FROM Tabs JOIN Tunings ON Tabs.tuningId = Tunings.id'''
     );
     List<List<String>> tabs = [];
 
     for (final row in result)
     {
       tabs.add([row['tabName'] as String,
-      row['tuningName'] as String]);
+      row['tuningName'] as String],
+      row['id'] as String);
     }
 
     return tabs;
   }
 
-  Future<Tab> readTab(TabId)
+  Future<Tab> readTab(int tabId) async
   {
+    final database = await Repo.instance.db;
+
+    final tabDetails = await database.query('Tabs', where:'id = ?',
+    whereArgs:[tabId]);
+
+    final tuningDetails = await database.query('Tunings', where:'id = ?',
+    whereArgs:[tabDetails['tuningId' as int]]);
+
     //
   }
 }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart' hide Tab;
 import 'package:provider/provider.dart';
-import 'package:tabsy/ui/view_models/tab_list_vm.dart';
-import 'package:tabsy/ui/widgets/tab_list/delete_dialog.dart';
-import 'edit_tab.dart';
-import 'read_tab.dart';
+import 'tab_list_vm.dart';
+import 'widgets/delete_dialog.dart';
+import 'package:tabsy/ui/edit_tab/edit_tab.dart';
+import 'package:tabsy/ui/read_tab/read_tab.dart';
 
 class TabListScreen extends StatelessWidget {
   const TabListScreen({super.key});
@@ -32,11 +32,11 @@ class TabListScreen extends StatelessWidget {
 
           return ListTile(
             title: Text(tab.name),
-            subtitle: Text(tab.tuning.name),
+            subtitle: Text(tab.tuning!.name),
             onTap: () async {
               await Navigator.push(
                 context,
-                MaterialPageRoute<void>(builder: (context) => ReadScreen(id: tab.id)),
+                MaterialPageRoute<void>(builder: (context) => ReadScreen(id: tab.id!)),
               );
               vm.loadTabs();
             },

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'ui/view_models/tab_list_vm.dart';
-import 'ui/screens/tab_list.dart';
+import 'ui/tab_list/tab_list_vm.dart';
+import 'ui/tab_list/tab_list.dart';
 
 class MyApp extends StatelessWidget
 {

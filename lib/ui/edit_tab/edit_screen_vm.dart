@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart' hide Tab;
 import 'package:collection/collection.dart';
-import 'package:tabsy/data/models/note/note.dart';
-import 'package:tabsy/data/models/tab/tab.dart';
-import 'package:tabsy/data/repository/repo.dart';
-import 'package:tabsy/data/models/tuning/tuning.dart';
+import 'package:tabsy/data/models/note.dart';
+import 'package:tabsy/data/models/tab.dart';
+import 'package:tabsy/data/repo_service.dart';
+import 'package:tabsy/data/models/tuning.dart';
 import 'package:tabsy/logic/beats_divider.dart';
 
 class EditScreenVm extends ChangeNotifier {
@@ -11,7 +11,7 @@ class EditScreenVm extends ChangeNotifier {
   int? activeString;
   int? activeBeat;
   Effect activeEffect = Effect.none;
-  NoteDuration activeDuration = NoteDuration.quarter;
+  Duration activeDuration = Duration.quarter;
   final List<Tab> _undoStack = [];
   final List<Tab> _redoStack = [];
 
@@ -36,7 +36,7 @@ class EditScreenVm extends ChangeNotifier {
   Tab get currentTab => _currentTab;
 
   Future<void> save() async {
-    await Repo.saveTab(_currentTab);
+    await RepoService.instance.saveTab(_currentTab.id,_currentTab);
   }
 
   void _commit(Tab newTab) {
@@ -253,7 +253,7 @@ class EditScreenVm extends ChangeNotifier {
     }
   }
 
-  void changeDuration(NoteDuration d) {
+  void changeDuration(Duration d) {
     activeDuration = d;
 
     if (activeBeat != null && activeString != null) {

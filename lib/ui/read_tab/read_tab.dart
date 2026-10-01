@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart' hide Tab;
 import 'package:provider/provider.dart';
 import 'package:tabsy/logic/beats_divider.dart';
-import 'package:tabsy/ui/view_models/read_screen_vm.dart';
+import 'read_screen_vm.dart';
 import 'package:tabsy/data/models/beat.dart';
-import 'package:tabsy/data/models/note/note.dart';
-import 'edit_tab.dart';
+import 'package:tabsy/data/models/note.dart';
+import 'package:tabsy/ui/edit_tab/edit_tab.dart';
 
 class ReadScreen extends StatelessWidget {
-  final String id;
+  final int id;
 
   const ReadScreen({required this.id, super.key});
 
@@ -70,13 +70,13 @@ class ReadTabDetails extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(height: pad),
-        Text("$space Tuning: ${vm.tab!.tuning.name}"),
+        Text("$space Tuning: ${vm.tab!.tuning!.name}"),
         Row(
           children: [
             SizedBox(width: 60.0),
             ...List.generate(
-              vm.tab!.tuning.strings.length,
-              (index) => Text(' ${vm.tab!.tuning.strings[index]} '),
+              vm.tab!.tuning!.strings.length,
+              (index) => Text(' ${vm.tab!.tuning!.strings[index]} '),
             ),
           ],
         ),
