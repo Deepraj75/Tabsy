@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart' hide Tab;
 import 'package:provider/provider.dart';
-import 'package:tabsy/data/models/note/note.dart';
-import 'package:tabsy/ui/view_models/edit_screen_vm.dart';
+import 'package:tabsy/data/models/note.dart';
+import 'package:tabsy/ui/edit_tab/edit_screen_vm.dart';
 import 'package:tabsy/logic/beats_divider.dart';
 import 'package:tabsy/data/models/beat.dart';
 
@@ -47,7 +47,7 @@ class TabBlock extends StatelessWidget {
   Widget getContent(int beat, int gs, int? ac, int? ar) {
     if (beat == 0) {
       return Text(
-        twb.tab.tuning.strings[gs],
+        twb.tab.tuning!.strings[gs],
         style: TextStyle(color: Colors.white),
       );
     }

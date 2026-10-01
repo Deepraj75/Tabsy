@@ -98,8 +98,8 @@ class RepoService {
     for (final row in result)
     {
       tabs.add([row['tabName'] as String,
-      row['tuningName'] as String],
-      row['id'] as String);
+      row['tuningName'] as String,
+      row['id'] as String]);
     }
 
     return tabs;

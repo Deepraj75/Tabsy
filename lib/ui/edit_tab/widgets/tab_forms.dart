@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tabsy/ui/edit_tab/edit_screen_vm.dart';
 import 'package:tabsy/data/models/tuning.dart';
+import 'package:tabsy/data/repo_service.dart';
 
 class TabName extends StatefulWidget {
   final GlobalKey<FormFieldState> nameKey;
@@ -14,6 +15,7 @@ class TabName extends StatefulWidget {
 class TabNameState extends State<TabName> {
   final _nameController = TextEditingController();
   late final FocusNode _nameFN;
+  List<Tuning> tunings = [];
 
   @override
   void initState() {
@@ -193,11 +195,8 @@ class TabDetailsState extends State<TabDetails> {
               const Text("Tuning: "),
               Expanded(
                 child: DropdownButtonFormField(
-                  initialValue: vm.currentTab.tuning.name == "E Standard"
-                      ? Tuning.eStandard
-                      : Tuning.dropD,
-                  items: [Tuning.eStandard, Tuning.dropD]
-                      .map(
+                  initialValue: vm.currentTab.tuning!.name,
+                  items: RepoService.instance.getAllTunings().map(
                         (tuning) => DropdownMenuItem(
                           value: tuning,
                           child: Text(tuning.name),
