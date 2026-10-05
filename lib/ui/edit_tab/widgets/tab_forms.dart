@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tabsy/ui/edit_tab/edit_screen_vm.dart';
 import 'package:tabsy/data/models/tuning.dart';
-import 'package:tabsy/data/repo_service.dart';
 
 class TabName extends StatefulWidget {
   final GlobalKey<FormFieldState> nameKey;
@@ -15,7 +14,6 @@ class TabName extends StatefulWidget {
 class TabNameState extends State<TabName> {
   final _nameController = TextEditingController();
   late final FocusNode _nameFN;
-  List<Tuning> tunings = [];
 
   @override
   void initState() {
@@ -127,6 +125,8 @@ class TabDetailsState extends State<TabDetails> {
         saveBpm();
       }
     });
+
+    context.read<EditScreenVm>().loadTunings();
   }
 
   @override
@@ -196,7 +196,8 @@ class TabDetailsState extends State<TabDetails> {
               Expanded(
                 child: DropdownButtonFormField(
                   initialValue: vm.currentTab.tuning!.name,
-                  items: RepoService.instance.getAllTunings().map(
+                  items: vm.tunings
+                      .map(
                         (tuning) => DropdownMenuItem(
                           value: tuning,
                           child: Text(tuning.name),
@@ -204,7 +205,7 @@ class TabDetailsState extends State<TabDetails> {
                       )
                       .toList(),
                   onChanged: (value) {
-                    saveTuning(value!);
+                    saveTuning(value! as Tuning);
                   },
                 ),
               ),

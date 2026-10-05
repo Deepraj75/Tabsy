@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart' hide Tab;
 import 'app.dart';
+import 'data/repo.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
-  //openDatabases and all
+  await Repo.instance.initDb();
   runApp(const MyApp());
 }

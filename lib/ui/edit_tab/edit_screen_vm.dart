@@ -12,6 +12,7 @@ class EditScreenVm extends ChangeNotifier {
   int? activeBeat;
   Effect activeEffect = Effect.none;
   Duration activeDuration = Duration.quarter;
+  List<Tuning> tunings = [];
   final List<Tab> _undoStack = [];
   final List<Tab> _redoStack = [];
 
@@ -19,8 +20,31 @@ class EditScreenVm extends ChangeNotifier {
   final FocusNode focusNode = FocusNode();
 
   EditScreenVm({Tab? tab}) {
-    _currentTab = tab ?? Tab();
     focusNode.addListener(_onFocusChanged);
+
+    if (tab != null) {
+      _currentTab = tab;
+      loadTunings();
+    } else {
+      _initializeNewTab();
+    }
+  }
+
+  Future<void> _initializeNewTab() async {
+    tunings = await RepoService.instance.getAllTunings();
+
+    final standard = tunings.firstWhere(
+      (tuning) => tuning.name == 'E Standard',
+    );
+
+    _currentTab = Tab(tuning: standard);
+
+    notifyListeners();
+  }
+
+  Future<void> loadTunings() async {
+    tunings = await RepoService.instance.getAllTunings();
+    notifyListeners();
   }
 
   void _onFocusChanged() {
@@ -36,7 +60,7 @@ class EditScreenVm extends ChangeNotifier {
   Tab get currentTab => _currentTab;
 
   Future<void> save() async {
-    await RepoService.instance.saveTab(_currentTab.id,_currentTab);
+    await RepoService.instance.saveTab(_currentTab.id, _currentTab);
   }
 
   void _commit(Tab newTab) {

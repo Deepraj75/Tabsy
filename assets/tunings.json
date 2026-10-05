@@ -1,0 +1,222 @@
+[
+  {
+    "name": "E Standard",
+    "strings": [
+      "E",
+      "A",
+      "D",
+      "G",
+      "B",
+      "E"
+    ]
+  },
+  {
+    "name": "Eb Standard",
+    "strings": [
+      "Eb",
+      "Ab",
+      "Db",
+      "Gb",
+      "Bb",
+      "Eb"
+    ]
+  },
+  {
+    "name": "D Standard",
+    "strings": [
+      "D",
+      "G",
+      "C",
+      "F",
+      "A",
+      "D"
+    ]
+  },
+  {
+    "name": "C# Standard",
+    "strings": [
+      "C#",
+      "F#",
+      "B",
+      "E",
+      "G#",
+      "C#"
+    ]
+  },
+  {
+    "name": "C Standard",
+    "strings": [
+      "C",
+      "F",
+      "Bb",
+      "Eb",
+      "G",
+      "C"
+    ]
+  },
+  {
+    "name": "B Standard",
+    "strings": [
+      "B",
+      "E",
+      "A",
+      "D",
+      "F#",
+      "B"
+    ]
+  },
+  {
+    "name": "Drop D",
+    "strings": [
+      "D",
+      "A",
+      "D",
+      "G",
+      "B",
+      "E"
+    ]
+  },
+  {
+    "name": "Drop Db",
+    "strings": [
+      "Db",
+      "Ab",
+      "Db",
+      "Gb",
+      "Bb",
+      "Eb"
+    ]
+  },
+  {
+    "name": "Drop C",
+    "strings": [
+      "C",
+      "G",
+      "C",
+      "F",
+      "A",
+      "D"
+    ]
+  },
+  {
+    "name": "Drop B",
+    "strings": [
+      "B",
+      "F#",
+      "B",
+      "E",
+      "G#",
+      "C#"
+    ]
+  },
+  {
+    "name": "Drop A",
+    "strings": [
+      "A",
+      "E",
+      "A",
+      "D",
+      "F#",
+      "B"
+    ]
+  },
+  {
+    "name": "Double Drop D",
+    "strings": [
+      "D",
+      "A",
+      "D",
+      "G",
+      "B",
+      "D"
+    ]
+  },
+  {
+    "name": "Open G",
+    "strings": [
+      "D",
+      "G",
+      "D",
+      "G",
+      "B",
+      "D"
+    ]
+  },
+  {
+    "name": "Open D",
+    "strings": [
+      "D",
+      "A",
+      "D",
+      "F#",
+      "A",
+      "D"
+    ]
+  },
+  {
+    "name": "Open E",
+    "strings": [
+      "E",
+      "B",
+      "E",
+      "G#",
+      "B",
+      "E"
+    ]
+  },
+  {
+    "name": "Open A",
+    "strings": [
+      "E",
+      "A",
+      "C#",
+      "E",
+      "A",
+      "E"
+    ]
+  },
+  {
+    "name": "DADGAD",
+    "strings": [
+      "D",
+      "A",
+      "D",
+      "G",
+      "A",
+      "D"
+    ]
+  },
+  {
+    "name": "DADF#AD",
+    "strings": [
+      "D",
+      "A",
+      "D",
+      "F#",
+      "A",
+      "D"
+    ]
+  },
+  {
+    "name": "CGCGCD",
+    "strings": [
+      "C",
+      "G",
+      "C",
+      "G",
+      "C",
+      "D"
+    ]
+  },
+  {
+    "name": "FACGCE",
+    "strings": [
+      "F",
+      "A",
+      "C",
+      "G",
+      "C",
+      "E"
+    ]
+  }
+]

@@ -1,5 +1,5 @@
 import 'repo.dart';
-//import 'models/note.dart';
+import 'models/note.dart';
 import 'models/tuning.dart';
 import 'models/tab.dart';
 import 'package:sqflite/sqflite.dart';
@@ -115,6 +115,20 @@ class RepoService {
     final tuningDetails = await database.query('Tunings', where:'id = ?',
     whereArgs:[tabDetails['tuningId' as int]]);
 
-    //
+    final tuning = Tuning.fromMap(tuningDetails.first);
+
+    final notesDetails = await database.query('Notes', where: 'tabId = ?',
+    whereArgs:[tabDetails['tabId' as int]], orderBy: 'pos');
+
+    int noOfStrings = tabDetails.first['NoOfStrings'] as int;
+
+    List<List<Note>> notes = List.generate(noOfStrings, (_) => []);
+
+    for (final row in notesDetails)
+    {
+      notes[row['gs'] as int].add(Note.fromMap(row));
+    }
+
+    return Tab.fromMap(tabDetails.first,tuning,notes);
   }
 }

@@ -40,12 +40,6 @@ class Tab {
     String? transcribed,
     List<List<Note>>? notes,
   }) {
-    if (tuning != null) {
-      if (this.tuning!.instrument != tuning.instrument) {
-        tuning = this.tuning;
-      }
-    }
-
     return Tab(
       name: name ?? this.name,
       tuning: tuning ?? this.tuning,
@@ -83,7 +77,7 @@ class Tab {
       id: map['id'] as int?,
       name: map['name'] as String,
       tuning: tuning,
-      noOfStrings: map['noOfStrings'],
+      noOfStrings: map['noOfStrings'] as int,
       bpm: map['bpm'] as int,
       upperFraction: map['upperFraction'] as int,
       lowerFraction: map['lowerFraction'] as int,
