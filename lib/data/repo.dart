@@ -10,22 +10,33 @@ class Repo {
   Repo._instance();
 
   Future<Database> get db async {
-    _database ??= await initDb();
-    return _database!;
+    return await initDb();
   }
 
   Future<Database> initDb() async {
-    String databasePath = await getDatabasesPath();
-    String path = join(databasePath, 'tabsy.db');
+    if (_database != null) return _database!;
 
-    return await openDatabase(
+    final databasePath = await getDatabasesPath();
+    final path = join(databasePath, 'tabsy.db');
+
+    _database = await openDatabase(
       path,
       version: 1,
       onCreate: _onCreate,
     );
+
+    return _database!;
   }
 
   Future<void> _onCreate(Database db, int version) async {
+    await db.execute('''
+      CREATE TABLE Tunings (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        strings TEXT NOT NULL
+      )
+    ''');
+
     await db.execute('''
       CREATE TABLE Tabs (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -55,20 +66,12 @@ class Repo {
       )
     ''');
 
-    await db.execute('''
-      CREATE TABLE Tunings (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        strings TEXT NOT NULL
-      )
-    ''');
-
     await loadTunings(db);
   }
 
   Future<void> loadTunings(Database db) async {
     final jsonString = await rootBundle.loadString(
-      'assets/guitar_tunings.json',
+      'assets/tunings.json',
     );
 
     final List<dynamic> data = jsonDecode(jsonString);

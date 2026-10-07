@@ -2,133 +2,128 @@ import 'repo.dart';
 import 'models/note.dart';
 import 'models/tuning.dart';
 import 'models/tab.dart';
-import 'package:sqflite/sqflite.dart';
 
 class RepoService {
   static final RepoService instance = RepoService._();
 
   RepoService._();
 
-  Future<Tuning?> getTuning(int id) async
-  {
-    Database database = await Repo.instance.db;
-    final result = await database.query('Tunings',
-    where: 'id = ?',whereArgs: [id]);
-
+  Future<Tuning?> getTuning(int id) async {
+    final database = await Repo.instance.db;
+    final result = await database.query(
+      'Tunings',
+      where: 'id = ?',
+      whereArgs: [id],
+      limit: 1,
+    );
     if (result.isEmpty) return null;
 
     return Tuning.fromMap(result.first);
   }
 
-  Future<List<Tuning>> getAllTunings() async
-  {
+  Future<List<Tuning>> getAllTunings() async {
     final database = await Repo.instance.db;
     final results = await database.query('Tunings');
 
-    List<Tuning> tunings = [];
-    for (Map<String,dynamic> result in results)
-    {
-      tunings.add(Tuning.fromMap(result));
-    }
-
-    return tunings;
+    return results.map(Tuning.fromMap).toList();
   }
 
-  Future<void> insertAllnotes(Database database, Tab tab) async
-  {
-    for (int i = 0; i < tab.notes.length; ++i)
-    {
-      for (int j = 0; j < tab.notes[i].length; ++j)
-      {
-        Map<String,dynamic> result = tab.notes[i][j].toMap();
-        result['gs'] = i;
-        result['pos'] = j;
-        result['tabId'] = tab.id;
+  /// Inserts or updates the tab and replaces all of its notes atomically.
+  /// Returns the tab's id (new id for inserts).
+  Future<int> saveTab(Tab tab) async {
+    final database = await Repo.instance.db;
 
-        await database.insert('notes', result);
+    return database.transaction((txn) async {
+      final int id;
+
+      if (tab.id == null) {
+        id = await txn.insert('Tabs', tab.toMap());
+      } else {
+        id = tab.id!;
+        await txn.update(
+          'Tabs',
+          tab.toMap(),
+          where: 'id = ?',
+          whereArgs: [id],
+        );
+        await txn.delete('Notes', where: 'tabId = ?', whereArgs: [id]);
       }
-    }
+
+      final batch = txn.batch();
+      for (int i = 0; i < tab.notes.length; ++i) {
+        for (int j = 0; j < tab.notes[i].length; ++j) {
+          batch.insert('Notes', {
+            ...tab.notes[i][j].toMap(),
+            'gs': i,
+            'pos': j,
+            'tabId': id,
+          });
+        }
+      }
+      await batch.commit(noResult: true);
+
+      return id;
+    });
   }
 
-  Future<void> deleteAllnotes(Database database, Tab tab) async
-  {
-    await database.delete(
-    'Notes',
-    where: 'tabId = ?',
-    whereArgs: [tab.id],
-  );
-  }
-
-  Future<int> saveTab(int? tabId, Tab tab) async
-  {
+  Future<void> deleteTab(int tabId) async {
     final database = await Repo.instance.db;
 
-    if (tabId == null)
-    {
-      return database.insert('Tabs',
-      tab.toMap());
-    }
-
-    await database.update('Tabs',tab.toMap(),where: 'id = ?',
-    whereArgs: [tab.id]);
-
-    await insertAllnotes(database,tab);
-    await deleteAllnotes(database,tab);
-
-    return tab.id!;
+    await database.transaction((txn) async {
+      await txn.delete('Notes', where: 'tabId = ?', whereArgs: [tabId]);
+      await txn.delete('Tabs', where: 'id = ?', whereArgs: [tabId]);
+    });
   }
 
-  Future<int> deleteTab(int tabId) async
-  {
+  Future<List<Map<String, dynamic>>> getAllTabs() async {
     final database = await Repo.instance.db;
-    
-    return database.delete('Tabs',where:'id = ?',whereArgs: [tabId]);
+
+    return database.rawQuery('''
+      SELECT Tabs.name AS tabName, Tunings.name AS tuningName, Tabs.id
+      FROM Tabs
+      JOIN Tunings ON Tabs.tuningId = Tunings.id
+    ''');
   }
 
-  Future<List<List<String>>> getAllTabs() async
-  {
+  Future<Tab> readTab(int tabId) async {
     final database = await Repo.instance.db;
 
-    final result = await database.rawQuery(
-      ''' SELECT Tabs.name as tabName, Tunings.name as tuningName,
-      Tabs.id FROM Tabs JOIN Tunings ON Tabs.tuningId = Tunings.id'''
+    final tabRows = await database.query(
+      'Tabs',
+      where: 'id = ?',
+      whereArgs: [tabId],
+      limit: 1,
     );
-    List<List<String>> tabs = [];
+    if (tabRows.isEmpty) throw StateError('Tab $tabId not found');
+    final tabRow = tabRows.first;
 
-    for (final row in result)
-    {
-      tabs.add([row['tabName'] as String,
-      row['tuningName'] as String,
-      row['id'] as String]);
+    final tuningRows = await database.query(
+      'Tunings',
+      where: 'id = ?',
+      whereArgs: [tabRow['tuningId']],
+      limit: 1,
+    );
+    if (tuningRows.isEmpty) {
+      throw StateError('Tuning ${tabRow['tuningId']} not found');
+    }
+    final tuning = Tuning.fromMap(tuningRows.first);
+
+    final noteRows = await database.query(
+      'Notes',
+      where: 'tabId = ?',
+      whereArgs: [tabId],
+      orderBy: 'gs, pos',
+    );
+
+    final noOfStrings = tabRow['noOfStrings'] as int;
+    final notes = List.generate(noOfStrings, (_) => <Note>[]);
+
+    for (final row in noteRows) {
+      final gs = row['gs'] as int;
+      if (gs < 0 || gs >= noOfStrings) continue; // ignore corrupt rows
+      notes[gs].add(Note.fromMap(row));
     }
 
-    return tabs;
-  }
-
-  Future<Tab> readTab(int tabId) async
-  {
-    final database = await Repo.instance.db;
-
-    final tabDetails = await database.query('Tabs', where:'id = ?',
-    whereArgs:[tabId]);
-
-    final tuningDetails = await database.query('Tunings', where:'id = ?',
-    whereArgs:[tabDetails['tuningId' as int]]);
-
-    final tuning = Tuning.fromMap(tuningDetails.first);
-
-    final notesDetails = await database.query('Notes', where: 'tabId = ?',
-    whereArgs:[tabDetails['tabId' as int]], orderBy: 'pos');
-
-    int noOfStrings = tabDetails.first['NoOfStrings'] as int;
-
-    List<List<Note>> notes = List.generate(noOfStrings, (_) => []);
-
-    for (final row in notesDetails)
-    {
-      notes[row['gs'] as int].add(Note.fromMap(row));
-    }
-
-    return Tab.fromMap(tabDetails.first,tuning,notes);
+    return Tab.fromMap(tabRow, tuning, notes);
   }
 }

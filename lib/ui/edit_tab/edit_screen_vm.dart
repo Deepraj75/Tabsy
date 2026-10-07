@@ -7,7 +7,7 @@ import 'package:tabsy/data/models/tuning.dart';
 import 'package:tabsy/logic/beats_divider.dart';
 
 class EditScreenVm extends ChangeNotifier {
-  late Tab _currentTab;
+  Tab _currentTab = Tab();
   int? activeString;
   int? activeBeat;
   Effect activeEffect = Effect.none;
@@ -15,6 +15,9 @@ class EditScreenVm extends ChangeNotifier {
   List<Tuning> tunings = [];
   final List<Tab> _undoStack = [];
   final List<Tab> _redoStack = [];
+  bool _initialized = false;
+
+  bool get initialized => _initialized;
 
   final TextEditingController controller = TextEditingController();
   final FocusNode focusNode = FocusNode();
@@ -24,22 +27,30 @@ class EditScreenVm extends ChangeNotifier {
 
     if (tab != null) {
       _currentTab = tab;
+      _initialized = true;
       loadTunings();
+      notifyListeners();
     } else {
       _initializeNewTab();
     }
   }
 
   Future<void> _initializeNewTab() async {
-    tunings = await RepoService.instance.getAllTunings();
+    try {
+      tunings = await RepoService.instance.getAllTunings();
 
-    final standard = tunings.firstWhere(
-      (tuning) => tuning.name == 'E Standard',
-    );
+      final standard =
+          tunings.firstWhereOrNull((t) => t.name == 'E Standard') ??
+          (tunings.isNotEmpty ? tunings.first : null);
 
-    _currentTab = Tab(tuning: standard);
-
-    notifyListeners();
+      _currentTab = standard != null ? Tab(tuning: standard) : Tab();
+    } catch (e, st) {
+      debugPrint('Failed to init new tab: $e\n$st');
+      _currentTab = Tab();
+    } finally {
+      _initialized = true;
+      notifyListeners();
+    }
   }
 
   Future<void> loadTunings() async {
@@ -60,7 +71,7 @@ class EditScreenVm extends ChangeNotifier {
   Tab get currentTab => _currentTab;
 
   Future<void> save() async {
-    await RepoService.instance.saveTab(_currentTab.id, _currentTab);
+    await RepoService.instance.saveTab(_currentTab);
   }
 
   void _commit(Tab newTab) {

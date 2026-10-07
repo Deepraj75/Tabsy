@@ -5,6 +5,7 @@ import 'package:tabsy/data/models/tuning.dart';
 
 class TabName extends StatefulWidget {
   final GlobalKey<FormFieldState> nameKey;
+
   const TabName({super.key, required this.nameKey});
 
   @override
@@ -18,7 +19,6 @@ class TabNameState extends State<TabName> {
   @override
   void initState() {
     super.initState();
-    _nameController.text = context.read<EditScreenVm>().currentTab.name;
 
     _nameFN = FocusNode();
 
@@ -31,13 +31,13 @@ class TabNameState extends State<TabName> {
 
   @override
   void dispose() {
-    super.dispose();
     _nameController.dispose();
     _nameFN.dispose();
+    super.dispose();
   }
 
   void saveName() {
-    if (widget.nameKey.currentState!.validate()) {
+    if (widget.nameKey.currentState?.validate() ?? false) {
       final vm = context.read<EditScreenVm>();
       vm.changeName(_nameController.text);
     }
@@ -47,6 +47,15 @@ class TabNameState extends State<TabName> {
   Widget build(BuildContext context) {
     final vm = context.watch<EditScreenVm>();
 
+    if (!vm.initialized) {
+      return const SizedBox(
+        height: 48,
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
     if (_nameController.text != vm.currentTab.name) {
       _nameController.text = vm.currentTab.name;
     }
@@ -55,7 +64,7 @@ class TabNameState extends State<TabName> {
       key: widget.nameKey,
       controller: _nameController,
       focusNode: _nameFN,
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
         border: UnderlineInputBorder(),
         hintText: "Enter a title",
       ),
@@ -63,6 +72,7 @@ class TabNameState extends State<TabName> {
         if (text == null || text.trim().isEmpty) {
           return "Title can't be empty";
         }
+
         return null;
       },
       onTapOutside: (_) => saveName(),
@@ -75,7 +85,10 @@ class TabDetails extends StatefulWidget {
   final GlobalKey<FormState> formKey;
   final double pad = 20;
 
-  const TabDetails({super.key, required this.formKey});
+  const TabDetails({
+    super.key,
+    required this.formKey,
+  });
 
   @override
   State<TabDetails> createState() => TabDetailsState();
@@ -94,45 +107,49 @@ class TabDetailsState extends State<TabDetails> {
   final _bpmController = TextEditingController();
   late final FocusNode _bpmFN;
 
+  bool _controllersInitialized = false;
+
   @override
   void initState() {
     super.initState();
 
-    _artistController.text = context.read<EditScreenVm>().currentTab.artist;
     _artistFN = FocusNode();
+    _tranFN = FocusNode();
+    _bpmFN = FocusNode();
+
     _artistFN.addListener(() {
       if (!_artistFN.hasFocus) {
         saveArtist();
       }
     });
 
-    _tranController.text = context.read<EditScreenVm>().currentTab.transcribed;
-    _tranFN = FocusNode();
     _tranFN.addListener(() {
       if (!_tranFN.hasFocus) {
         saveTran();
       }
     });
 
-    _bpmController.text = context
-        .read<EditScreenVm>()
-        .currentTab
-        .bpm
-        .toString();
-    _bpmFN = FocusNode();
     _bpmFN.addListener(() {
-      if (!_tranFN.hasFocus) {
+      if (!_bpmFN.hasFocus) {
         saveBpm();
       }
     });
+  }
 
-    context.read<EditScreenVm>().loadTunings();
+  void _initializeControllers(EditScreenVm vm) {
+    if (_controllersInitialized || !vm.initialized) {
+      return;
+    }
+
+    _artistController.text = vm.currentTab.artist;
+    _tranController.text = vm.currentTab.transcribed;
+    _bpmController.text = vm.currentTab.bpm.toString();
+
+    _controllersInitialized = true;
   }
 
   @override
   void dispose() {
-    super.dispose();
-
     _artistController.dispose();
     _artistFN.dispose();
 
@@ -141,6 +158,8 @@ class TabDetailsState extends State<TabDetails> {
 
     _bpmController.dispose();
     _bpmFN.dispose();
+
+    super.dispose();
   }
 
   void saveTuning(Tuning tuning) {
@@ -159,22 +178,22 @@ class TabDetailsState extends State<TabDetails> {
   }
 
   void saveBpm() {
-    if (_bpmKey.currentState!.validate()) {
-      int num = int.parse(_bpmController.text.trim());
+    if (_bpmKey.currentState?.validate() ?? false) {
+      final num = int.parse(_bpmController.text.trim());
       final vm = context.read<EditScreenVm>();
       vm.changeBpm(num);
     }
   }
 
   void saveArtist() {
-    if (_artistKey.currentState!.validate()) {
+    if (_artistKey.currentState?.validate() ?? false) {
       final vm = context.read<EditScreenVm>();
       vm.changeArtist(_artistController.text);
     }
   }
 
   void saveTran() {
-    if (_tranKey.currentState!.validate()) {
+    if (_tranKey.currentState?.validate() ?? false) {
       final vm = context.read<EditScreenVm>();
       vm.changeTran(_tranController.text);
     }
@@ -184,81 +203,97 @@ class TabDetailsState extends State<TabDetails> {
   Widget build(BuildContext context) {
     final vm = context.watch<EditScreenVm>();
 
+    if (!vm.initialized) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
+    _initializeControllers(vm);
+
     return Form(
       key: widget.formKey,
       child: Column(
         children: [
-          //tuning
+          // Tuning
           Row(
             children: [
               SizedBox(width: widget.pad),
               const Text("Tuning: "),
               Expanded(
-                child: DropdownButtonFormField(
-                  initialValue: vm.currentTab.tuning!.name,
+                child: DropdownButtonFormField<Tuning>(
+                  initialValue: vm.currentTab.tuning,
                   items: vm.tunings
                       .map(
-                        (tuning) => DropdownMenuItem(
+                        (tuning) => DropdownMenuItem<Tuning>(
                           value: tuning,
                           child: Text(tuning.name),
                         ),
                       )
                       .toList(),
                   onChanged: (value) {
-                    saveTuning(value! as Tuning);
+                    if (value != null) {
+                      saveTuning(value);
+                    }
                   },
                 ),
               ),
               SizedBox(width: widget.pad),
             ],
           ),
-          //time signature
+
+          // Time signature
           Row(
             children: [
-              SizedBox(width: 20),
+              const SizedBox(width: 20),
               const Text("Time Signature: "),
               SizedBox(
                 width: widget.pad * 2,
-                child: DropdownButtonFormField(
+                child: DropdownButtonFormField<int>(
                   initialValue: vm.currentTab.upperFraction,
                   items: [3, 4, 5]
                       .map(
-                        (upper) => DropdownMenuItem(
+                        (upper) => DropdownMenuItem<int>(
                           value: upper,
                           child: Text('$upper'),
                         ),
                       )
                       .toList(),
                   onChanged: (value) {
-                    saveNumerator(value!);
+                    if (value != null) {
+                      saveNumerator(value);
+                    }
                   },
                 ),
               ),
               const Text("/"),
               SizedBox(
                 width: widget.pad * 2,
-                child: DropdownButtonFormField(
+                child: DropdownButtonFormField<int>(
                   initialValue: vm.currentTab.lowerFraction,
                   items: [2, 4, 8]
                       .map(
-                        (lower) => DropdownMenuItem(
+                        (lower) => DropdownMenuItem<int>(
                           value: lower,
                           child: Text('$lower'),
                         ),
                       )
                       .toList(),
                   onChanged: (value) {
-                    saveDenominator(value!);
+                    if (value != null) {
+                      saveDenominator(value);
+                    }
                   },
                 ),
               ),
             ],
           ),
-          //BPM
+
+          // BPM
           Row(
             children: [
               SizedBox(width: widget.pad),
-              Text("BPM: "),
+              const Text("BPM: "),
               SizedBox(
                 width: widget.pad * 7,
                 child: TextFormField(
@@ -266,14 +301,19 @@ class TabDetailsState extends State<TabDetails> {
                   focusNode: _bpmFN,
                   controller: _bpmController,
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(border: UnderlineInputBorder()),
+                  decoration: const InputDecoration(
+                    border: UnderlineInputBorder(),
+                  ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
                       return "BPM can't be empty";
                     }
-                    if (int.tryParse(value) == null || int.parse(value) <= 0) {
+
+                    if (int.tryParse(value) == null ||
+                        int.parse(value) <= 0) {
                       return "Give a positive integer";
                     }
+
                     return null;
                   },
                   onTapOutside: (_) => saveBpm(),
@@ -283,23 +323,26 @@ class TabDetailsState extends State<TabDetails> {
               SizedBox(width: widget.pad),
             ],
           ),
-          //Artist
+
+          // Artist
           Row(
             children: [
               SizedBox(width: widget.pad),
-              Text("Artist: "),
+              const Text("Artist: "),
               Expanded(
                 child: TextFormField(
                   key: _artistKey,
                   focusNode: _artistFN,
                   controller: _artistController,
-                  decoration: InputDecoration(border: UnderlineInputBorder()),
+                  decoration: const InputDecoration(
+                    border: UnderlineInputBorder(),
+                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return "Artist's name can't be empty";
-                    } else {
-                      return null;
                     }
+
+                    return null;
                   },
                   onTapOutside: (_) => saveArtist(),
                   onFieldSubmitted: (_) => saveArtist(),
@@ -308,23 +351,26 @@ class TabDetailsState extends State<TabDetails> {
               SizedBox(width: widget.pad),
             ],
           ),
-          //Trancriber
+
+          // Transcriber
           Row(
             children: [
               SizedBox(width: widget.pad),
-              Text("Transcribed by: "),
+              const Text("Transcribed by: "),
               Expanded(
                 child: TextFormField(
                   key: _tranKey,
                   focusNode: _tranFN,
                   controller: _tranController,
-                  decoration: InputDecoration(border: UnderlineInputBorder()),
+                  decoration: const InputDecoration(
+                    border: UnderlineInputBorder(),
+                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return "Transcriber's name can't be empty";
-                    } else {
-                      return null;
                     }
+
+                    return null;
                   },
                   onTapOutside: (_) => saveTran(),
                   onFieldSubmitted: (_) => saveTran(),

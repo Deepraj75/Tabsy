@@ -27,6 +27,11 @@ class _ReadScreenBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final vm = context.watch<ReadScreenVm>();
 
+    if (vm.initialized == false)
+    {
+      return Center(child:CircularProgressIndicator());
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(vm.tab!.name),

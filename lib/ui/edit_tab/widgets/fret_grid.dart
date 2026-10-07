@@ -273,6 +273,13 @@ class FretGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     final vm = context.watch<EditScreenVm>();
     final TabWithBeats grid = BeatsDivider.getTabWithBeats(vm.currentTab);
+    if (!vm.initialized) {
+      return const SliverToBoxAdapter(
+        child:Center(
+        child: CircularProgressIndicator(),
+        )
+      );
+    }
 
     double screenWidth = MediaQuery.of(context).size.width;
 

@@ -31,12 +31,12 @@ class TabListScreen extends StatelessWidget {
           final tab = vm.tabs[index];
 
           return ListTile(
-            title: Text(tab.name),
-            subtitle: Text(tab.tuning!.name),
+            title: Text(tab['tabName']),
+            subtitle: Text(tab['tuningName']),
             onTap: () async {
               await Navigator.push(
                 context,
-                MaterialPageRoute<void>(builder: (context) => ReadScreen(id: tab.id!)),
+                MaterialPageRoute<void>(builder: (context) => ReadScreen(id: tab['id'] as int)),
               );
               vm.loadTabs();
             },
@@ -44,11 +44,11 @@ class TabListScreen extends StatelessWidget {
               onPressed: () async {
                 final shouldDelete = await DeleteDialog.buildDD(
                   context,
-                  tab.name,
+                  tab['tabName'],
                 );
 
                 if (shouldDelete!) {
-                  vm.deleteTab(tab);
+                  vm.deleteTab(tab['id'] as int);
                 }
               },
               icon: const Icon(Icons.delete),
