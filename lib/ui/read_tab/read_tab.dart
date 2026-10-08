@@ -102,7 +102,7 @@ class ReadTabDetails extends StatelessWidget {
 }
 
 class ReadFrets extends StatelessWidget {
-  final double cellWidth = 50;
+  final double cellWidth = 30;
   final double cellHeight = 25;
 
   const ReadFrets({super.key});
@@ -267,15 +267,13 @@ class FretBlock extends StatelessWidget {
                 ),
               ),
             ),
-            Padding(
-              padding: EdgeInsets.only(left: 20.0),
-              child: SizedBox(
+            SizedBox(
                 height: 30,
                 child: Row(
                   children: List.generate(
                     onBlock,
                     (beat) => SizedBox(width: cw, child: Text(getPMtext(beat))),
-                  ),
+                  
                 ),
               ),
             ),

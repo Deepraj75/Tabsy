@@ -37,7 +37,7 @@ class EditScreenVm extends ChangeNotifier {
 
   Future<void> _initializeNewTab() async {
     try {
-      tunings = await RepoService.instance.getAllTunings();
+      await loadTunings();
 
       final standard =
           tunings.firstWhereOrNull((t) => t.name == 'E Standard') ??
