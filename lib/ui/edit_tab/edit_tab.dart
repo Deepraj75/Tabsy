@@ -10,13 +10,15 @@ import 'widgets/new_measure_button.dart';
 
 class EditScreen extends StatelessWidget {
   final Tab? tab;
+  final int? folderId;
 
-  const EditScreen({super.key, this.tab});
+  const EditScreen({super.key, this.tab, this.folderId});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => EditScreenVm(tab: tab),
+      create: (_) => EditScreenVm(tab: tab,
+      folderId:folderId),
       child: _EditScreenBody(),
     );
   }

@@ -16,13 +16,14 @@ class EditScreenVm extends ChangeNotifier {
   final List<Tab> _undoStack = [];
   final List<Tab> _redoStack = [];
   bool _initialized = false;
+  int? folderId;
 
   bool get initialized => _initialized;
 
   final TextEditingController controller = TextEditingController();
   final FocusNode focusNode = FocusNode();
 
-  EditScreenVm({Tab? tab}) {
+  EditScreenVm({Tab? tab, int? folderId}) {
     focusNode.addListener(_onFocusChanged);
 
     if (tab != null) {
@@ -31,26 +32,22 @@ class EditScreenVm extends ChangeNotifier {
       loadTunings();
       notifyListeners();
     } else {
-      _initializeNewTab();
+      _initializeNewTab(folderId);
     }
   }
 
-  Future<void> _initializeNewTab() async {
-    try {
-      await loadTunings();
+  Future<void> _initializeNewTab(int? folderId) async {
+    await loadTunings();
 
-      final standard =
-          tunings.firstWhereOrNull((t) => t.name == 'E Standard') ??
-          (tunings.isNotEmpty ? tunings.first : null);
+    final standard =
+        tunings.firstWhereOrNull((t) => t.name == 'E Standard') ??
+        (tunings.isNotEmpty ? tunings.first : null);
 
-      _currentTab = standard != null ? Tab(tuning: standard) : Tab();
-    } catch (e, st) {
-      debugPrint('Failed to init new tab: $e\n$st');
-      _currentTab = Tab();
-    } finally {
-      _initialized = true;
-      notifyListeners();
-    }
+    _currentTab = standard != null
+        ? Tab(tuning: standard, folderId: folderId)
+        : Tab();
+    _initialized = true;
+    notifyListeners();
   }
 
   Future<void> loadTunings() async {

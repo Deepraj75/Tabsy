@@ -54,7 +54,7 @@ class Tab {
       lowerFraction: lowerFraction ?? this.lowerFraction,
       artist: artist ?? this.artist,
       transcribed: transcribed ?? this.transcribed,
-      folderId: folder,
+      folderId: folder ?? folderId,
       notes: notes ?? this.notes,
     );
   }
@@ -89,7 +89,7 @@ class Tab {
       lowerFraction: map['lowerFraction'] as int,
       artist: map['artist'] as String,
       transcribed: map['transcribed'] as String,
-      folderId: map['folderId'] as int,
+      folderId: map['folderId'] as int?,
       notes: notes,
     );
   }

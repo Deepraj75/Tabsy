@@ -19,7 +19,9 @@ class TabListScreen extends StatelessWidget {
         onPressed: () async {
           await Navigator.push(
             context,
-            MaterialPageRoute<void>(builder: (context) => EditScreen()),
+            MaterialPageRoute<void>(
+              builder: (context) => EditScreen(folderId:vm.folderId)
+            ),
           );
 
           vm.loadTabs();
