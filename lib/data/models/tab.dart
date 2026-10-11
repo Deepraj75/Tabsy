@@ -12,6 +12,8 @@ class Tab {
   final int lowerFraction;
   final String artist;
   final String transcribed;
+  final int? folderId;
+  //null means no folder
   final List<List<Note>> notes;
 
   Tab({
@@ -24,6 +26,7 @@ class Tab {
     this.lowerFraction = 4,
     this.artist = "Self",
     this.transcribed = "Self",
+    this.folderId,
     List<List<Note>>? notes,
   }) :
        notes =
@@ -38,6 +41,7 @@ class Tab {
     int? bpm,
     String? artist,
     String? transcribed,
+    int? folder,
     List<List<Note>>? notes,
   }) {
     return Tab(
@@ -50,6 +54,7 @@ class Tab {
       lowerFraction: lowerFraction ?? this.lowerFraction,
       artist: artist ?? this.artist,
       transcribed: transcribed ?? this.transcribed,
+      folderId: folder,
       notes: notes ?? this.notes,
     );
   }
@@ -65,6 +70,7 @@ class Tab {
       'lowerFraction': lowerFraction,
       'artist': artist,
       'transcribed': transcribed,
+      'folderId':folderId
     };
   }
 
@@ -83,6 +89,7 @@ class Tab {
       lowerFraction: map['lowerFraction'] as int,
       artist: map['artist'] as String,
       transcribed: map['transcribed'] as String,
+      folderId: map['folderId'] as int,
       notes: notes,
     );
   }

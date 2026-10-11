@@ -2,6 +2,7 @@ import 'repo.dart';
 import 'models/note.dart';
 import 'models/tuning.dart';
 import 'models/tab.dart';
+import 'models/folder.dart';
 
 class RepoService {
   static final RepoService instance = RepoService._();
@@ -40,12 +41,7 @@ class RepoService {
         id = await txn.insert('Tabs', tab.toMap());
       } else {
         id = tab.id!;
-        await txn.update(
-          'Tabs',
-          tab.toMap(),
-          where: 'id = ?',
-          whereArgs: [id],
-        );
+        await txn.update('Tabs', tab.toMap(), where: 'id = ?', whereArgs: [id]);
         await txn.delete('Notes', where: 'tabId = ?', whereArgs: [id]);
       }
 
@@ -75,14 +71,24 @@ class RepoService {
     });
   }
 
-  Future<List<Map<String, dynamic>>> getAllTabs() async {
-    final database = await Repo.instance.db;
+  Future<List<Map<String, Object?>>> getAllTabs(int? folderId) async {
+    final db = await Repo.instance.db;
 
-    return database.rawQuery('''
-      SELECT Tabs.name AS tabName, Tunings.name AS tuningName, Tabs.id
-      FROM Tabs
-      JOIN Tunings ON Tabs.tuningId = Tunings.id
-    ''');
+    String query = '''
+    SELECT
+      Tabs.name AS tabName,
+      Tunings.name AS tuningName,
+      Tabs.id,
+      Tabs.folderId
+    FROM Tabs
+    JOIN Tunings ON Tabs.tuningId = Tunings.id
+  ''';
+
+    if (folderId != null) {
+      query += ' WHERE Tabs.folderId = ?';
+    }
+
+    return db.rawQuery(query, folderId != null ? [folderId] : []);
   }
 
   Future<Tab> readTab(int tabId) async {
@@ -125,5 +131,35 @@ class RepoService {
     }
 
     return Tab.fromMap(tabRow, tuning, notes);
+  }
+
+  Future<List<Folder>> getAllFolders() async {
+    final database = await Repo.instance.db;
+    final results = await database.query('Folders');
+
+    return results.map(Folder.fromMap).toList();
+  }
+
+  Future<int?> getFolder(String name) async {
+    final database = await Repo.instance.db;
+
+    final result = await database.query(
+      'Folders',
+      where: 'name = ?',
+      whereArgs: [name],
+      limit: 1,
+    );
+
+    if (result.isEmpty) {
+      return null;
+    }
+
+    return result.first['id'] as int;
+  }
+
+  Future<int> createFolder(String name) async {
+    final database = await Repo.instance.db;
+
+    return await database.insert('Folders', Folder(name: name).toMap());
   }
 }

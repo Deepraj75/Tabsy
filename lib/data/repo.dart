@@ -30,6 +30,13 @@ class Repo {
 
   Future<void> _onCreate(Database db, int version) async {
     await db.execute('''
+      CREATE TABLE Folders (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL
+      )
+    ''');
+
+    await db.execute('''
       CREATE TABLE Tunings (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
@@ -48,6 +55,7 @@ class Repo {
         lowerFraction INTEGER NOT NULL,
         artist TEXT NOT NULL,
         transcribed TEXT NOT NULL,
+        folderId INTEGER REFERENCES Folders(id) ON DELETE SET NULL,
         FOREIGN KEY (tuningId) REFERENCES Tunings(id)
       )
     ''');
@@ -61,8 +69,7 @@ class Repo {
         pos INTEGER NOT NULL,
         noteEffect INTEGER NOT NULL,
         noteDuration INTEGER NOT NULL,
-        FOREIGN KEY (tabId) REFERENCES Tabs(id)
-          ON DELETE CASCADE
+        FOREIGN KEY (tabId) REFERENCES Tabs(id) ON DELETE CASCADE
       )
     ''');
 
