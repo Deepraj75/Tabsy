@@ -21,8 +21,12 @@ class TabListVm extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> deleteTab(int id) async {
-    await RepoService.instance.deleteTab(id);
+  Future<void> deleteTabs() async {
+    for(int id in selectedTabIds)
+    {
+      await RepoService.instance.deleteTab(id);
+    }
+
     await loadTabs();
   }
 
@@ -54,14 +58,10 @@ class TabListVm extends ChangeNotifier {
   }
 
   void toggleSelect(int tabId) {
-    
-  if (selectedTabIds.contains(tabId)) {
-    selectedTabIds.remove(tabId);
-  } else {
-    selectedTabIds.add(tabId);
-  }
+    if (!selectedTabIds.add(tabId)) {
+      selectedTabIds.remove(tabId);
+    }
 
-  debugPrint("${selectedTabIds.length}");
-  notifyListeners();
-}
+    notifyListeners();
+  }
 }
