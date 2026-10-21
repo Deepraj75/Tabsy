@@ -7,6 +7,7 @@ class TabListVm extends ChangeNotifier {
   bool folderLoaded = false;
   List<Folder> folders = [];
   int? folderId;
+  Set<int> selectedTabIds = {};
 
   List<Map<String, dynamic>> get tabs => List.unmodifiable(_tabs);
 
@@ -51,4 +52,16 @@ class TabListVm extends ChangeNotifier {
 
     return true;
   }
+
+  void toggleSelect(int tabId) {
+    
+  if (selectedTabIds.contains(tabId)) {
+    selectedTabIds.remove(tabId);
+  } else {
+    selectedTabIds.add(tabId);
+  }
+
+  debugPrint("${selectedTabIds.length}");
+  notifyListeners();
+}
 }
