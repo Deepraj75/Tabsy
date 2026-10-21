@@ -16,7 +16,7 @@ class TabListVm extends ChangeNotifier {
   }
 
   Future<void> loadTabs() async {
-    _tabs = await RepoService.instance.getAllTabs(folderId);
+    _tabs = await RepoService.instance.getAllTabs();
     notifyListeners();
   }
 

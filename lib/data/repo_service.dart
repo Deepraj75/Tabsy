@@ -71,7 +71,7 @@ class RepoService {
     });
   }
 
-  Future<List<Map<String, Object?>>> getAllTabs(int? folderId) async {
+  Future<List<Map<String, Object?>>> getAllTabs() async {
     final db = await Repo.instance.db;
 
     String query = '''
@@ -81,14 +81,9 @@ class RepoService {
       Tabs.id,
       Tabs.folderId
     FROM Tabs
-    JOIN Tunings ON Tabs.tuningId = Tunings.id
-  ''';
+    JOIN Tunings ON Tabs.tuningId = Tunings.id''';
 
-    if (folderId != null) {
-      query += ' WHERE Tabs.folderId = ?';
-    }
-
-    return db.rawQuery(query, folderId != null ? [folderId] : []);
+    return db.rawQuery(query);
   }
 
   Future<Tab> readTab(int tabId) async {

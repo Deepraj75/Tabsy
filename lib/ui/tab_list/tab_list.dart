@@ -13,6 +13,23 @@ class TabListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final vm = context.watch<TabListVm>();
 
+    List<Map<String,Object?>> filteredTabs = [];
+
+    for (final tab in vm.tabs)
+    {
+      if (vm.folderId == null)
+      {
+        filteredTabs.add(tab);
+      }
+      else
+      {
+        if (tab['folderId'] == vm.folderId)
+        {
+          filteredTabs.add(tab);
+        }
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(title: Text("Your Tabs"), backgroundColor: Colors.green),
       floatingActionButton: FloatingActionButton(
@@ -65,13 +82,13 @@ class TabListScreen extends StatelessWidget {
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: vm.tabs.length,
+              itemCount: filteredTabs.length,
               itemBuilder: (context, index) {
-                final tab = vm.tabs[index];
+                final tab = filteredTabs[index];
 
                 return ListTile(
-                  title: Text(tab['tabName']),
-                  subtitle: Text(tab['tuningName']),
+                  title: Text(tab['tabName'] as String),
+                  subtitle: Text(tab['tuningName'] as String),
                   onTap: () async {
                     await Navigator.push(
                       context,
@@ -85,7 +102,7 @@ class TabListScreen extends StatelessWidget {
                     onPressed: () async {
                       final shouldDelete = await DeleteDialog.buildDD(
                         context,
-                        tab['tabName'],
+                        tab['tabName'] as String,
                       );
 
                       if (shouldDelete!) {
