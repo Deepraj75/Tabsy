@@ -168,4 +168,11 @@ class RepoService {
 
     return await database.insert('Folders', Folder(name: name).toMap());
   }
+
+  Future<void> deleteFolder(int id) async
+  {
+    final database = await Repo.instance.db;
+
+    database.delete("Folders",where:"id = ?",whereArgs:[id]);
+  }
 }

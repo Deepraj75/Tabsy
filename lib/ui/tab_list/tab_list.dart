@@ -2,6 +2,7 @@ import 'package:flutter/material.dart' hide Tab;
 import 'package:provider/provider.dart';
 import 'tab_list_vm.dart';
 import 'widgets/add_folder_button.dart';
+import 'widgets/delete_folder_button.dart';
 import 'widgets/move_folder.dart';
 import 'widgets/search_tab.dart';
 import 'package:tabsy/ui/edit_tab/edit_tab.dart';
@@ -103,6 +104,7 @@ class TabListScreen extends StatelessWidget {
                       : CircularProgressIndicator(),
                 ),
                 AddFolderButton(),
+                DeleteFolderButton()
               ],
             ),
           ),

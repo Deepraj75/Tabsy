@@ -58,6 +58,12 @@ class TabListVm extends ChangeNotifier {
     return true;
   }
 
+  Future<void> deleteFolder(int id) async
+  {
+    RepoService.instance.deleteFolder(id);
+    notifyListeners();
+  }
+
   Future<void> moveTabs(int? fid) async {
     for (final id in selectedTabIds) {
       RepoService.instance.moveTab(id, fid);

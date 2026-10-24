@@ -10,17 +10,16 @@ class SearchTab extends StatefulWidget {
 }
 
 class SearchTabState extends State<SearchTab> {
-
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<TabListVm>();
 
     return TextFormField(
       autofocus: true,
-      decoration: const InputDecoration(
-        hintText: "Search by name of Tab"
-        ),
-      onChanged: (word) {vm.search(word);}
+      decoration: const InputDecoration(hintText: "Search by name of Tab"),
+      onChanged: (word) {
+        vm.search(word);
+      },
     );
   }
 }
