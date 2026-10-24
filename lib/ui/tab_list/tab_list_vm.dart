@@ -80,6 +80,17 @@ class TabListVm extends ChangeNotifier {
 
   void clearSelection() {
     selectedTabIds = {};
+    notifyListeners();
+  }
+
+  void selectAll(List<int> ids)
+  {
+    for (int id in ids)
+    {
+      selectedTabIds.add(id);
+    }
+
+    notifyListeners();
   }
 
   bool folderMatches(int? fid) {

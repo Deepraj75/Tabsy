@@ -25,8 +25,8 @@ class TabListScreen extends StatelessWidget {
     List<Map<String, Object?>> filteredTabs = [];
 
     for (final tab in vm.tabs) {
-      if (vm.folderMatches(tab["folderId"])
-      && vm.searchMatches(tab["tabName"])) {
+      if (vm.folderMatches(tab["folderId"]) &&
+          vm.searchMatches(tab["tabName"])) {
         filteredTabs.add(tab);
       }
     }
@@ -35,14 +35,17 @@ class TabListScreen extends StatelessWidget {
       appBar: AppBar(
         title: !vm.isSearching ? Text("Your Tabs") : SearchTab(),
         backgroundColor: Colors.green,
-        actions:[
-          !vm.isSearching?
-          IconButton(
-            onPressed: vm.activateSearch,
-            icon:const Icon(Icons.search)):
-            IconButton(onPressed: vm.cancelSearch,
-            icon: const Icon(Icons.cancel))
-        ]
+        actions: [
+          !vm.isSearching
+              ? IconButton(
+                  onPressed: vm.activateSearch,
+                  icon: const Icon(Icons.search),
+                )
+              : IconButton(
+                  onPressed: vm.cancelSearch,
+                  icon: const Icon(Icons.cancel),
+                ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
@@ -104,7 +107,7 @@ class TabListScreen extends StatelessWidget {
                       : CircularProgressIndicator(),
                 ),
                 AddFolderButton(),
-                DeleteFolderButton()
+                DeleteFolderButton(),
               ],
             ),
           ),
@@ -166,6 +169,20 @@ class TabListScreen extends StatelessWidget {
                         ),
                       );
                     },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.select_all),
+                    onPressed: () {
+                      List<int> ids = [];
+                      for (final tab in filteredTabs) {
+                        ids.add(tab["id"] as int);
+                      }
+                      vm.selectAll(ids);
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.cancel),
+                    onPressed: vm.clearSelection,
                   ),
                 ],
               ),
