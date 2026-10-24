@@ -25,8 +25,7 @@ cells with "<-". Clicking on them takes us to the fret with the content
 
 ## Videos
 
-![Editor and Reader](assets/editor_and_reader.mp4)
-![Quality of life improvements in 1.2](assets/version_1.2.mp4)
+![Videos](https://github.com/Deepraj75/Tabsy/issues/1)
 
 ## Pictures
 
