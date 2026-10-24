@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'tab_list_vm.dart';
 import 'widgets/add_folder_button.dart';
 import 'widgets/move_folder.dart';
+import 'widgets/search_tab.dart';
 import 'package:tabsy/ui/edit_tab/edit_tab.dart';
 import 'package:tabsy/ui/read_tab/read_tab.dart';
 
@@ -20,20 +21,28 @@ class TabListScreen extends StatelessWidget {
     final vm = context.watch<TabListVm>();
     final theme = Theme.of(context);
 
-    List<Map<String,Object?>> filteredTabs = [];
+    List<Map<String, Object?>> filteredTabs = [];
 
     for (final tab in vm.tabs) {
-      if (vm.folderId == null) {
+      if (vm.folderMatches(tab["folderId"])
+      && vm.searchMatches(tab["tabName"])) {
         filteredTabs.add(tab);
-      } else {
-        if (tab['folderId'] == vm.folderId) {
-          filteredTabs.add(tab);
-        }
       }
     }
 
     return Scaffold(
-      appBar: AppBar(title: Text("Your Tabs"), backgroundColor: Colors.green),
+      appBar: AppBar(
+        title: !vm.isSearching ? Text("Your Tabs") : SearchTab(),
+        backgroundColor: Colors.green,
+        actions:[
+          !vm.isSearching?
+          IconButton(
+            onPressed: vm.activateSearch,
+            icon:const Icon(Icons.search)):
+            IconButton(onPressed: vm.cancelSearch,
+            icon: const Icon(Icons.cancel))
+        ]
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           await Navigator.push(

@@ -8,6 +8,8 @@ class TabListVm extends ChangeNotifier {
   List<Folder> folders = [];
   int? folderId;
   Set<int> selectedTabIds = {};
+  bool isSearching = false;
+  String searchWord = "";
 
   List<Map<String, dynamic>> get tabs => List.unmodifiable(_tabs);
 
@@ -22,8 +24,7 @@ class TabListVm extends ChangeNotifier {
   }
 
   Future<void> deleteTabs() async {
-    for(int id in selectedTabIds)
-    {
+    for (int id in selectedTabIds) {
       await RepoService.instance.deleteTab(id);
     }
 
@@ -57,10 +58,8 @@ class TabListVm extends ChangeNotifier {
     return true;
   }
 
-  Future<void> moveTabs(int? fid) async
-  {
-    for (final id in selectedTabIds)
-    {
+  Future<void> moveTabs(int? fid) async {
+    for (final id in selectedTabIds) {
       RepoService.instance.moveTab(id, fid);
     }
   }
@@ -73,8 +72,37 @@ class TabListVm extends ChangeNotifier {
     notifyListeners();
   }
 
-  void clearSelection()
-  {
+  void clearSelection() {
     selectedTabIds = {};
+  }
+
+  bool folderMatches(int? fid) {
+    if (folderId == null) return true;
+
+    return folderId == fid;
+  }
+
+  bool searchMatches(String name) {
+    if (searchWord.isEmpty) {
+      return true;
+    }
+
+    return name.toLowerCase().contains(searchWord.toLowerCase());
+  }
+
+  void activateSearch() {
+    isSearching = true;
+    notifyListeners();
+  }
+
+  void cancelSearch() {
+    isSearching = false;
+    searchWord = "";
+    notifyListeners();
+  }
+
+  void search(String word) {
+    searchWord = word;
+    notifyListeners();
   }
 }
