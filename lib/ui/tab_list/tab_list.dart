@@ -1,30 +1,32 @@
 import 'package:flutter/material.dart' hide Tab;
 import 'package:provider/provider.dart';
 import 'tab_list_vm.dart';
-import 'widgets/delete_dialog.dart';
 import 'widgets/add_folder_button.dart';
+import 'widgets/move_folder.dart';
 import 'package:tabsy/ui/edit_tab/edit_tab.dart';
 import 'package:tabsy/ui/read_tab/read_tab.dart';
 
 class TabListScreen extends StatelessWidget {
   const TabListScreen({super.key});
 
+  bool isSelected(TabListVm vm, int index) {
+    if (index == 0) return vm.folderId == null;
+
+    return vm.folderId == vm.folders[index - 1].id;
+  }
+
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<TabListVm>();
+    final theme = Theme.of(context);
 
     List<Map<String,Object?>> filteredTabs = [];
 
-    for (final tab in vm.tabs)
-    {
-      if (vm.folderId == null)
-      {
+    for (final tab in vm.tabs) {
+      if (vm.folderId == null) {
         filteredTabs.add(tab);
-      }
-      else
-      {
-        if (tab['folderId'] == vm.folderId)
-        {
+      } else {
+        if (tab['folderId'] == vm.folderId) {
           filteredTabs.add(tab);
         }
       }
@@ -37,7 +39,10 @@ class TabListScreen extends StatelessWidget {
           await Navigator.push(
             context,
             MaterialPageRoute<void>(
-              builder: (context) => EditScreen(folderId:vm.folderId)
+              builder: (context) {
+                vm.clearSelection();
+                return EditScreen(folderId: vm.folderId);
+              },
             ),
           );
 
@@ -47,6 +52,7 @@ class TabListScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
+          SizedBox(height: 10),
           SizedBox(
             height: 56.0,
             child: Row(
@@ -58,9 +64,20 @@ class TabListScreen extends StatelessWidget {
                           itemCount: vm.folders.length + 1,
                           itemBuilder: (BuildContext context, int index) {
                             return TextButton(
-                              onPressed: () => vm.changeFolder(
-                                index == 0 ? null : vm.folders[index - 1].id,
+                              style: TextButton.styleFrom(
+                                foregroundColor: isSelected(vm, index)
+                                    ? theme.colorScheme.onPrimary
+                                    : theme.colorScheme.primary,
+                                backgroundColor: isSelected(vm, index)
+                                    ? theme.colorScheme.primary
+                                    : Colors.transparent,
                               ),
+                              onPressed: () {
+                                vm.changeFolder(
+                                  index == 0 ? null : vm.folders[index - 1].id,
+                                );
+                                vm.clearSelection();
+                              },
                               child: Center(
                                 child: Text(
                                   index == 0
@@ -80,6 +97,7 @@ class TabListScreen extends StatelessWidget {
               ],
             ),
           ),
+          SizedBox(height: 10),
           Expanded(
             child: ListView.builder(
               itemCount: filteredTabs.length,
@@ -89,7 +107,11 @@ class TabListScreen extends StatelessWidget {
                 return ListTile(
                   title: Text(tab['tabName'] as String),
                   subtitle: Text(tab['tuningName'] as String),
+                  selected: vm.selectedTabIds.contains(tab['id'] as int),
+                  selectedTileColor: Colors.white,
+                  selectedColor: Colors.black,
                   onTap: () async {
+                    vm.clearSelection();
                     await Navigator.push(
                       context,
                       MaterialPageRoute<void>(
@@ -99,17 +121,14 @@ class TabListScreen extends StatelessWidget {
                     vm.loadTabs();
                   },
                   trailing: IconButton(
-                    onPressed: () async {
-                      final shouldDelete = await DeleteDialog.buildDD(
-                        context,
-                        tab['tabName'] as String,
-                      );
-
-                      if (shouldDelete!) {
-                        vm.deleteTab(tab['id'] as int);
-                      }
+                    onPressed: () {
+                      vm.toggleSelect(tab['id'] as int);
                     },
-                    icon: const Icon(Icons.delete),
+                    icon: Icon(
+                      vm.selectedTabIds.contains(tab['id'] as int)
+                          ? Icons.check_circle
+                          : Icons.circle_outlined,
+                    ),
                   ),
                 );
               },
@@ -117,6 +136,30 @@ class TabListScreen extends StatelessWidget {
           ),
         ],
       ),
+      bottomNavigationBar: vm.selectedTabIds.isNotEmpty
+          ? BottomAppBar(
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: vm.deleteTabs,
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.drive_file_move),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => ChangeNotifierProvider.value(
+                          value: context.watch<TabListVm>(),
+                          child: const MoveFolder(),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            )
+          : null,
     );
   }
 }

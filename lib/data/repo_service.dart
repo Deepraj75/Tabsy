@@ -128,6 +128,17 @@ class RepoService {
     return Tab.fromMap(tabRow, tuning, notes);
   }
 
+  Future<void> moveTab(int tabId, int? fid) async {
+    final db = await Repo.instance.db;
+
+    await db.update(
+      'Tabs',
+      {'folderId': fid},
+      where: 'id = ?',
+      whereArgs: [tabId],
+    );
+  }
+
   Future<List<Folder>> getAllFolders() async {
     final database = await Repo.instance.db;
     final results = await database.query('Folders');

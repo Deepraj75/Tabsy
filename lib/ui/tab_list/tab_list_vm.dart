@@ -57,11 +57,24 @@ class TabListVm extends ChangeNotifier {
     return true;
   }
 
+  Future<void> moveTabs(int? fid) async
+  {
+    for (final id in selectedTabIds)
+    {
+      RepoService.instance.moveTab(id, fid);
+    }
+  }
+
   void toggleSelect(int tabId) {
     if (!selectedTabIds.add(tabId)) {
       selectedTabIds.remove(tabId);
     }
 
     notifyListeners();
+  }
+
+  void clearSelection()
+  {
+    selectedTabIds = {};
   }
 }
