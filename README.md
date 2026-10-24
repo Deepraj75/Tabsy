@@ -4,8 +4,8 @@ A CRUD(Create Read Update Delete) application for guitar Tablatures.
 
 ## Features
 
-- Create, Read, Update and Delete operations for tabs
-- Support undo and redo stack operations
+### Version 1.1
+
 - Grid based editor where only one cell can be edited at a time
 - Real time editing where changes by the user are shown immediately
 - Buttons to change duration and effect of selected note, which
@@ -13,6 +13,20 @@ retains the previous selection by user
 - Since notes can span multiple beats, they are only represented
 by one cell contatining the fret number and effect followed by
 cells with "<-". Clicking on them takes us to the fret with the content
+- Support undo and redo stack operations.
+
+### Version 1.2
+
+- Switched from hive to SQL database for storing tabs.
+- Folders for organising your tabs
+- Live search by the name of the tab.
+- Multiple selection allowed
+- Select all and cancel selection options.
+
+## Videos
+
+![Editor and Reader](assets/editor_and_reader.mp4)
+![Quality of life improvements in 1.2](assets/version_1.2.mp4)
 
 ## Pictures
 
@@ -38,10 +52,9 @@ editing with unsaved changes
 - Add more tunings and include the option to
 create and save a custom tuning
 - Allow any value for numerator of time signature
-- Switch to SQL for database and allow sorting
-tabs or storing them into folders
 - Include a feature which makes putting tapping
 easier
+- Make search match even when the typed name is wrong
 
 ## Running the Project
 
@@ -84,7 +97,7 @@ flutter run
 - Flutter as the UI framework
 - VS Code for writing code
 - Android Studio for Android building tools
-- Hive for storage
+- Sqflite for storage
 - GIMP for creating the icon
 
 ## What is a Guitar Tablature?

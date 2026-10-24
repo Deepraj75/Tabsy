@@ -68,6 +68,8 @@ flutter:
   uses-material-design: true
   assets:
     - assets/tunings.json
+    - assets/editor_and_reader.mp4
+    - assets/version_1.2.mp4
 
   # To add assets to your application, add an assets section, like this:
   # assets:
